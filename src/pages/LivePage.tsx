@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
-import { supabase, type LivestreamWithHost } from '@/lib/supabase';
+import { supabase, type LiveStreamWithHost } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { BottomNav } from '@/components/BottomNav';
 
 export function LivePage() {
   const { user } = useAuth();
-  const [streams, setStreams] = useState<LivestreamWithHost[]>([]);
+  const [streams, setStreams] = useState<LiveStreamWithHost[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const startY = useRef(0);
@@ -72,7 +72,7 @@ export function LivePage() {
         ))}
         {[1,2,3].map(n => (<div key={n} className="aspect-square bg-[#222] rounded-xl flex flex-col items-center justify-center"><span className="text-2xl">+</span><span className="text-xs opacity-50">Request</span></div>))}
       </div>
-      <BottomNav />
+      <BottomNav current="" />
     </div>
   );
 }

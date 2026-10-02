@@ -10,7 +10,7 @@ import { NotificationsPage } from '@/pages/NotificationsPage';
 import { MessagesPage } from '@/pages/MessagesPage';
 import { SettingsPage } from '@/pages/SettingsPage';
 import SettingsAndPrivacy from '@/pages/SettingsAndPrivacy';
-import { MePage } from '@/pages/MePage';
+import MePage from '@/pages/MePage';
 import BalancePage from '@/pages/BalancePage';
 import ActivityCenterPage from '@/pages/ActivityCenterPage';
 import QrCodePage from '@/pages/QrCodePage';

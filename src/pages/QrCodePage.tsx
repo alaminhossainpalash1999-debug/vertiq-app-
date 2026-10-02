@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 export default function QrCodePage() {
   const { profile } = useAuth();
   const username = profile?.username || 'palashhvac';
-  const name = profile?.display_name || 'Palash Hossain HVAC';
+  const name = (profile as any)?.display_name || profile?.username || 'User';
   const profileLink = `${window.location.origin}/#/profile/${username}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(profileLink)}&color=000000&bgcolor=ffffff`;
 

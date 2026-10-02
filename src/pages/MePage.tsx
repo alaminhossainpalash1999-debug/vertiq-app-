@@ -1,7 +1,14 @@
 import { useState } from "react";
 
-export default function MePage() {
-  const [showSettings, setShowSettings] = useState(false);
+interface Props {
+  showSettings?: boolean;
+  onCloseSettings?: () => void;
+}
+
+export default function MePage({ showSettings: externalShow, onCloseSettings }: Props = {}) {
+  const [internalShow, setInternalShow] = useState(false);
+  const showSettings = externalShow ?? internalShow;
+  const setShowSettings = onCloseSettings ?? setInternalShow;
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col relative">
