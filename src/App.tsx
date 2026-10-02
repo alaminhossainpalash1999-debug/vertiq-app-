@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import HomePage from "./pages/HomePage";
+import HomePage from "@/pages/HomePage";
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { AuthPage } from '@/pages/AuthPage';
 import { FeedPage } from '@/pages/FeedPage';
