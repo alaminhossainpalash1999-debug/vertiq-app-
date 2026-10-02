@@ -1,31 +1,117 @@
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, ArrowLeft } from 'lucide-react';
+
+interface Section {
+  label: string;
+  items: { title: string; hash?: string; value?: string }[];
+}
+
+const sections: Section[] = [
+  {
+    label: 'Activity',
+    items: [
+      { title: 'Activity center', hash: '#/settings/activity-center' },
+      { title: 'Your activity', hash: '#/settings/your-activity' },
+    ],
+  },
+  {
+    label: 'Account',
+    items: [
+      { title: 'Account', hash: '#/settings/account' },
+      { title: 'Privacy', hash: '#/settings/privacy' },
+      { title: 'Blocked accounts', hash: '#/settings/blocked' },
+    ],
+  },
+  {
+    label: 'Visibility',
+    items: [
+      { title: 'Private account', hash: '#/settings/private', value: 'Off' },
+      { title: 'Profile view', hash: '#/settings/profile-view', value: 'Everyone' },
+    ],
+  },
+  {
+    label: 'Interactions',
+    items: [
+      { title: 'Comments', hash: '#/settings/comments' },
+      { title: 'Mentions', hash: '#/settings/mentions' },
+      { title: 'Direct messages', hash: '#/settings/dm' },
+      { title: 'Reuse of content', hash: '#/settings/reuse' },
+      { title: 'Downloads', hash: '#/settings/downloads', value: 'Off' },
+      { title: 'Following list', hash: '#/settings/following-list', value: 'Only you' },
+      { title: 'Liked videos', hash: '#/settings/liked-videos', value: 'Only you' },
+    ],
+  },
+  {
+    label: 'Content & Display',
+    items: [
+      { title: 'App language', hash: '#/language', value: 'English' },
+      { title: 'Content preferences', hash: '#/settings/content-prefs' },
+      { title: 'Viewers', hash: '#/settings/viewers', value: 'On' },
+    ],
+  },
+  {
+    label: 'Cache & Cellular',
+    items: [
+      { title: 'Data Saver', hash: '#/settings/data-saver', value: 'Off' },
+      { title: 'Clear cache', hash: '#/settings/clear-cache' },
+    ],
+  },
+  {
+    label: 'Support & About',
+    items: [
+      { title: 'Help Center', hash: '#/settings/help' },
+      { title: 'Community Guidelines', hash: '#/settings/guidelines' },
+      { title: 'About Vertiq', hash: '#/settings/about' },
+    ],
+  },
+  {
+    label: 'Login',
+    items: [
+      { title: 'Log out', hash: '#/settings/logout' },
+    ],
+  },
+];
+
 export default function SettingsAndPrivacy() {
+  function go(hash: string) {
+    window.location.hash = hash;
+  }
+
   return (
-    <div className="min-h-screen bg-[#f5f5f5] text-black">
-      <div className="bg-white p-4 text-center font-bold text-xl">Settings and privacy</div>
-      <div className="p-3">
-        <p className="text-gray-500 text-sm px-2 py-2">Visibility</p>
-        <div className="bg-white rounded-lg">
-          <div className="flex justify-between p-4 border-b">Private account <ChevronRight size={18}/></div>
-          <div className="flex justify-between p-4">Blocked accounts <ChevronRight size={18}/></div>
-        </div>
-        <p className="text-gray-500 text-sm px-2 py-2 mt-4">Interactions</p>
-        <div className="bg-white rounded-lg">
-          <div className="flex justify-between p-4 border-b">Comments <ChevronRight size={18}/></div>
-          <div className="flex justify-between p-4 border-b">Mentions <ChevronRight size={18}/></div>
-          <div className="flex justify-between p-4 border-b">Direct messages <ChevronRight size={18}/></div>
-          <div className="flex justify-between p-4 border-b">Reuse of content <ChevronRight size={18}/></div>
-          <div className="flex justify-between p-4 border-b">Display profile when sharing links <span className="text-gray-400">On <ChevronRight size={18} className="inline"/></span></div>
-          <div className="flex justify-between p-4 border-b">Downloads <span className="text-gray-400">Off <ChevronRight size={18} className="inline"/></span></div>
-          <div className="flex justify-between p-4 border-b">Following list <span className="text-gray-400">Only you <ChevronRight size={18} className="inline"/></span></div>
-          <div className="flex justify-between p-4 border-b">Liked videos <span className="text-gray-400">Only you <ChevronRight size={18} className="inline"/></span></div>
-          <div className="flex justify-between p-4 border-b bg-white" onClick={()=>window.location.hash='#/language'} style={{cursor:'pointer'}}>
-  <span>App Language</span> 
-  <span className="text-gray-400">English <ChevronRight size={18} className="inline"/></span>
-</div>
-          <div className="flex justify-between p-4">Viewers <span className="text-gray-400">On <ChevronRight size={18} className="inline"/></span></div>
-        </div>
-        <p className="text-center text-gray-400 text-xs mt-6">v47.1.4</p>
+    <div className="min-h-screen bg-black text-white pb-8">
+      {/* Header */}
+      <div className="sticky top-0 z-20 bg-black/95 backdrop-blur-sm px-4 pt-6 pb-3 border-b border-white/10 flex items-center gap-3">
+        <button onClick={() => window.history.back()} className="text-gray-400 hover:text-white transition-colors">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <h1 className="text-lg font-bold">Settings and privacy</h1>
+      </div>
+
+      {/* Sections */}
+      <div className="px-4 py-3 space-y-5">
+        {sections.map((section) => (
+          <div key={section.label}>
+            <h2 className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-2 px-1">{section.label}</h2>
+            <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+              {section.items.map((item, i) => (
+                <button
+                  key={item.title}
+                  onClick={() => item.hash && go(item.hash)}
+                  className={`w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/5 transition-colors text-left ${
+                    i < section.items.length - 1 ? 'border-b border-white/5' : ''
+                  }`}
+                >
+                  <span className="text-sm font-medium">{item.title}</span>
+                  <div className="flex items-center gap-2">
+                    {item.value && <span className="text-xs text-gray-500">{item.value}</span>}
+                    <ChevronRight className="w-4 h-4 text-gray-600" />
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <p className="text-center text-xs text-gray-700 pt-2">VERTIQ v1.0</p>
       </div>
     </div>
   );

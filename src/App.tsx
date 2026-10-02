@@ -23,6 +23,7 @@ import { AudioChatPage } from '@/pages/AudioChatPage';
 import { AudioRoomPage } from '@/pages/AudioRoomPage';
 import EditProfilePage from '@/pages/EditProfilepage';
 import { LanguagePage } from '@/pages/LanguagePage';
+import SubSettingPage from '@/pages/SubSettingPage';
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash);
   useEffect(() => {
@@ -64,10 +65,36 @@ function Router() {
   if (hash === '#/balance') return <BalancePage />;
   if (hash === '#/activity-center') return <ActivityCenterPage />;
   if (hash === '#/qr-code') return <QrCodePage />;
-  if (hash === '#/promote') return <PromotePage />
+  if (hash === '#/promote') return <PromotePage />;
   if (hash === '#/admin') return <AdminPage />;
   if (hash === '#/live') return <LivePage />;
   if (hash === '#/audio') return <AudioChatPage />;
+
+  // Sub-settings pages with back navigation to #/settings-privacy
+  if (hash === '#/settings/account') return <SubSettingPage title="Account" items={[{ title: 'Username', value: localStorage.getItem('edit_username') || 'Not set' }, { title: 'Email' }, { title: 'Phone number' }, { title: 'Password', hash: '#/settings/password' }, { title: 'Two-factor authentication' }]} />;
+  if (hash === '#/settings/privacy') return <SubSettingPage title="Privacy" items={[{ title: 'Private account', value: 'Off' }, { title: 'Blocked accounts', hash: '#/settings/blocked' }, { title: 'Following list', hash: '#/settings/following-list', value: 'Only you' }, { title: 'Liked videos', hash: '#/settings/liked-videos', value: 'Only you' }]} />;
+  if (hash === '#/settings/blocked') return <SubSettingPage title="Blocked accounts" />;
+  if (hash === '#/settings/comments') return <SubSettingPage title="Comments" items={[{ title: 'Who can comment', value: 'Everyone' }, { title: 'Comment filters', hash: '#/settings/comment-filters' }, { title: 'Filtered keywords' }]} />;
+  if (hash === '#/settings/mentions') return <SubSettingPage title="Mentions" items={[{ title: 'Who can mention you', value: 'Everyone' }]} />;
+  if (hash === '#/settings/dm') return <SubSettingPage title="Direct messages" items={[{ title: 'Who can send you DMs', value: 'Everyone' }, { title: 'Message filters' }]} />;
+  if (hash === '#/settings/reuse') return <SubSettingPage title="Reuse of content" items={[{ title: 'Allow reuse', value: 'Off' }]} />;
+  if (hash === '#/settings/downloads') return <SubSettingPage title="Downloads" items={[{ title: 'Video downloads', value: 'Off' }, { title: 'Allow your videos to be downloaded', value: 'Off' }]} />;
+  if (hash === '#/settings/following-list') return <SubSettingPage title="Following list" items={[{ title: 'Who can see your following list', value: 'Only you' }, { title: 'Friends' }, { title: 'Everyone' }]} />;
+  if (hash === '#/settings/liked-videos') return <SubSettingPage title="Liked videos" items={[{ title: 'Who can see your liked videos', value: 'Only you' }, { title: 'Friends' }, { title: 'Everyone' }]} />;
+  if (hash === '#/settings/content-prefs') return <SubSettingPage title="Content preferences" items={[{ title: 'Filtered keywords' }, { title: 'Restricted mode', value: 'Off' }]} />;
+  if (hash === '#/settings/viewers') return <SubSettingPage title="Viewers" items={[{ title: 'Allow viewers to see your profile', value: 'On' }]} />;
+  if (hash === '#/settings/data-saver') return <SubSettingPage title="Data Saver" items={[{ title: 'Data Saver', value: 'Off' }, { title: 'Enable on cellular data', value: 'On' }]} />;
+  if (hash === '#/settings/clear-cache') return <SubSettingPage title="Clear cache" items={[{ title: 'Clear cache', value: '0 MB' }]} />;
+  if (hash === '#/settings/help') return <SubSettingPage title="Help Center" items={[{ title: 'FAQ' }, { title: 'Contact support' }, { title: 'Report a problem' }]} />;
+  if (hash === '#/settings/guidelines') return <SubSettingPage title="Community Guidelines" />;
+  if (hash === '#/settings/about') return <SubSettingPage title="About Vertiq" items={[{ title: 'Terms of Service' }, { title: 'Privacy Policy' }, { title: 'Community Guidelines' }, { title: 'Version', value: '1.0.0' }]} />;
+  if (hash === '#/settings/logout') return <SubSettingPage title="Log out" showLogout />;
+  if (hash === '#/settings/activity-center') return <SubSettingPage title="Activity center" items={[{ title: 'Recent activity' }, { title: 'Notifications' }]} />;
+  if (hash === '#/settings/your-activity') return <SubSettingPage title="Your activity" items={[{ title: 'Screen time' }, { title: 'Watch history' }, { title: 'Search history' }]} />;
+  if (hash === '#/settings/private') return <SubSettingPage title="Private account" items={[{ title: 'Private account', value: 'Off' }]} />;
+  if (hash === '#/settings/profile-view') return <SubSettingPage title="Profile view" items={[{ title: 'Who can view your profile', value: 'Everyone' }, { title: 'Friends' }, { title: 'Only you' }]} />;
+  if (hash === '#/settings/password') return <SubSettingPage title="Password" items={[{ title: 'Change password' }]} />;
+  if (hash === '#/settings/comment-filters') return <SubSettingPage title="Comment filters" items={[{ title: 'Filter spam', value: 'On' }, { title: 'Filter keywords' }]} />;
 
   const liveHostMatch = hash.match(/^#\/live\/host\/(.+)$/);
   if (liveHostMatch) return <GoLivePage streamId={liveHostMatch[1]} />;

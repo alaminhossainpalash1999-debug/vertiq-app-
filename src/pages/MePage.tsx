@@ -19,8 +19,8 @@ export default function MePage({ showSettings: externalShow, onCloseSettings }: 
     <div className="min-h-screen bg-black text-white flex flex-col relative">
       <div className="h-[60px] flex items-center justify-between px-4 border-b border-white/10">
         <div className="flex items-center gap-4">
-          <button onClick={() => closeDrawerAndNavigate('#/edit-profile')} className="text-2xl">←</button>
-          <h1 className="text-[18px] font-bold">Edit Profile</h1>
+          <button onClick={() => window.location.hash = '#/'} className="text-2xl">←</button>
+          <h1 className="text-[18px] font-bold">Me</h1>
         </div>
         <button onClick={() => setShowSettings(true)} className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">⚙️</button>
       </div>
