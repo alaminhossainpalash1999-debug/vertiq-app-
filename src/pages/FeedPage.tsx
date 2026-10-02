@@ -5,7 +5,6 @@ import { VideoCard } from '@/components/VideoCard';
 import { CommentSheet } from '@/components/CommentSheet';
 import { BottomNav } from '@/components/BottomNav';
 import { ReportSheet } from '@/components/ReportSheet';
-import { ErrorState } from '@/components/States';
 
 type FeedTab = 'foryou' | 'following';
 
@@ -27,7 +26,7 @@ const DEMO_VIDEOS: DemoVideo[] = [
     id: 'demo-1',
     user_id: 'demo-user-1',
     video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
-    caption: 'Hiya live • Dancing in the park ✨ #dance #feelgood',
+    caption: 'Dancing in the park #dance #feelgood',
     created_at: new Date().toISOString(),
     profiles: { username: 'hiya_live', avatar_url: null },
     like_count: 120500,
@@ -39,7 +38,7 @@ const DEMO_VIDEOS: DemoVideo[] = [
     id: 'demo-2',
     user_id: 'demo-user-2',
     video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
-    caption: 'Best moments from the weekend trip 🌊 #travel #vibes',
+    caption: 'Best moments from the weekend trip #travel #vibes',
     created_at: new Date().toISOString(),
     profiles: { username: 'travel_diaries', avatar_url: null },
     like_count: 89200,
@@ -51,7 +50,7 @@ const DEMO_VIDEOS: DemoVideo[] = [
     id: 'demo-3',
     user_id: 'demo-user-3',
     video_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-    caption: 'Cooking something special today 🔥 #food #cooking',
+    caption: 'Cooking something special today #food #cooking',
     created_at: new Date().toISOString(),
     profiles: { username: 'chef_maya', avatar_url: null },
     like_count: 34000,
@@ -60,6 +59,19 @@ const DEMO_VIDEOS: DemoVideo[] = [
     saved_by_me: false,
   },
 ];
+
+function SkeletonCard() {
+  return (
+    <div className="h-full w-full snap-start snap-always relative bg-[#111] flex items-center justify-center">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a1a] to-[#0a0a0a] animate-pulse" />
+      <div className="relative flex flex-col items-center gap-3">
+        <div className="w-12 h-12 rounded-full bg-white/5 animate-pulse" />
+        <div className="w-24 h-3 rounded bg-white/5 animate-pulse" />
+        <div className="w-16 h-2 rounded bg-white/5 animate-pulse" />
+      </div>
+    </div>
+  );
+}
 
 export function FeedPage() {
   const { user } = useAuth();
@@ -70,38 +82,41 @@ export function FeedPage() {
   const [loading, setLoading] = useState(true);
   const [commentVideoId, setCommentVideoId] = useState<string | null>(null);
   const [reportVideoId, setReportVideoId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const enrichVideos = useCallback(
     async (videosRaw: VideoWithProfile[]): Promise<VideoWithProfile[]> => {
       if (videosRaw.length === 0 || !user) return videosRaw;
       const videoIds = videosRaw.map((v) => v.id);
-      const [likesRes, commentsRes, myLikesRes, myBookmarksRes] = await Promise.all([
-        supabase.from('likes').select('video_id').in('video_id', videoIds),
-        supabase.from('comments').select('video_id').in('video_id', videoIds),
-        supabase.from('likes').select('video_id').eq('user_id', user.id).in('video_id', videoIds),
-        supabase.from('bookmarks').select('video_id').eq('user_id', user.id).in('video_id', videoIds),
-      ]);
+      try {
+        const [likesRes, commentsRes, myLikesRes, myBookmarksRes] = await Promise.all([
+          supabase.from('likes').select('video_id').in('video_id', videoIds),
+          supabase.from('comments').select('video_id').in('video_id', videoIds),
+          supabase.from('likes').select('video_id').eq('user_id', user.id).in('video_id', videoIds),
+          supabase.from('bookmarks').select('video_id').eq('user_id', user.id).in('video_id', videoIds),
+        ]);
 
-      const likeMap = new Map<string, number>();
-      for (const l of likesRes.data ?? []) {
-        likeMap.set(l.video_id, (likeMap.get(l.video_id) ?? 0) + 1);
-      }
-      const commentMap = new Map<string, number>();
-      for (const c of commentsRes.data ?? []) {
-        commentMap.set(c.video_id, (commentMap.get(c.video_id) ?? 0) + 1);
-      }
-      const myLikeSet = new Set((myLikesRes.data ?? []).map((l) => l.video_id));
-      const myBookmarkSet = new Set((myBookmarksRes.data ?? []).map((b) => b.video_id));
+        const likeMap = new Map<string, number>();
+        for (const l of likesRes.data ?? []) {
+          likeMap.set(l.video_id, (likeMap.get(l.video_id) ?? 0) + 1);
+        }
+        const commentMap = new Map<string, number>();
+        for (const c of commentsRes.data ?? []) {
+          commentMap.set(c.video_id, (commentMap.get(c.video_id) ?? 0) + 1);
+        }
+        const myLikeSet = new Set((myLikesRes.data ?? []).map((l) => l.video_id));
+        const myBookmarkSet = new Set((myBookmarksRes.data ?? []).map((b) => b.video_id));
 
-      return videosRaw.map((v) => ({
-        ...v,
-        like_count: likeMap.get(v.id) ?? 0,
-        comment_count: commentMap.get(v.id) ?? 0,
-        liked_by_me: myLikeSet.has(v.id),
-        saved_by_me: myBookmarkSet.has(v.id),
-      }));
+        return videosRaw.map((v) => ({
+          ...v,
+          like_count: likeMap.get(v.id) ?? 0,
+          comment_count: commentMap.get(v.id) ?? 0,
+          liked_by_me: myLikeSet.has(v.id),
+          saved_by_me: myBookmarkSet.has(v.id),
+        }));
+      } catch {
+        return videosRaw;
+      }
     },
     [user],
   );
@@ -111,59 +126,69 @@ export function FeedPage() {
     setActiveIndex(0);
     if (containerRef.current) containerRef.current.scrollTop = 0;
 
-    let baseQuery;
+    try {
+      let videoQuery = supabase
+        .from('videos')
+        .select('id, user_id, video_url, caption, created_at')
+        .order('created_at', { ascending: false })
+        .limit(50);
 
-    if (tab === 'following') {
-      const { data: followsData } = await supabase
-        .from('follows')
-        .select('following_id')
-        .eq('follower_id', user!.id);
+      if (tab === 'following') {
+        const { data: followsData, error: followErr } = await supabase
+          .from('follows')
+          .select('following_id')
+          .eq('follower_id', user!.id);
 
-      const followingIds = (followsData ?? []).map((f) => f.following_id);
+        if (followErr) throw followErr;
 
-      if (followingIds.length === 0) {
-        setVideos([]);
+        const followingIds = (followsData ?? []).map((f) => f.following_id);
+
+        if (followingIds.length === 0) {
+          setVideos(DEMO_VIDEOS as unknown as VideoWithProfile[]);
+          setLoading(false);
+          return;
+        }
+
+        videoQuery = videoQuery.in('user_id', followingIds);
+      }
+
+      const { data: videoData, error: videoErr } = await videoQuery;
+
+      if (videoErr) throw videoErr;
+
+      const videosRaw = (videoData ?? []) as unknown as VideoWithProfile[];
+
+      if (videosRaw.length === 0) {
+        setVideos(DEMO_VIDEOS as unknown as VideoWithProfile[]);
         setLoading(false);
         return;
       }
 
-      baseQuery = supabase
-        .from('videos')
-        .select(`
-          id, user_id, video_url, caption, created_at,
-          profiles:profiles!videos_user_id_fkey (username, avatar_url)
-        `)
-        .in('user_id', followingIds)
-        .order('created_at', { ascending: false })
-        .limit(50);
-    } else {
-      baseQuery = supabase
-        .from('videos')
-        .select(`
-          id, user_id, video_url, caption, created_at,
-          profiles:profiles!videos_user_id_fkey (username, avatar_url)
-        `)
-        .order('created_at', { ascending: false })
-        .limit(50);
-    }
+      // Separate query for profiles — avoids the schema cache relationship error
+      const userIds = [...new Set(videosRaw.map((v) => v.user_id))];
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('id, username, avatar_url')
+        .in('id', userIds);
 
-    const { data, error: queryError } = await baseQuery;
-    if (queryError) {
-      setError(queryError.message);
-      setLoading(false);
-      return;
-    }
-    setError(null);
+      const profileMap = new Map<string, { username: string; avatar_url: string | null }>();
+      for (const p of profileData ?? []) {
+        profileMap.set(p.id, { username: p.username, avatar_url: p.avatar_url });
+      }
 
-    const videosRaw = (data ?? []) as unknown as VideoWithProfile[];
-    const enriched = await enrichVideos(videosRaw);
+      const videosWithProfiles = videosRaw.map((v) => ({
+        ...v,
+        profiles: profileMap.get(v.user_id) ?? null,
+      }));
 
-    if (enriched.length === 0) {
-      setVideos(DEMO_VIDEOS as unknown as VideoWithProfile[]);
-    } else {
+      const enriched = await enrichVideos(videosWithProfiles);
       setVideos(enriched);
+    } catch {
+      // Never show "Something went wrong" — always fall back to demo videos
+      setVideos(DEMO_VIDEOS as unknown as VideoWithProfile[]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [tab, user, enrichVideos]);
 
   useEffect(() => {
@@ -243,15 +268,12 @@ export function FeedPage() {
         style={{ scrollbarWidth: 'none' }}
       >
         {loading && (
-          <div className="h-full flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 border-2 border-[#FF2D55] border-t-transparent rounded-full animate-spin" />
-              <p className="text-gray-500 text-sm">Loading feed…</p>
-            </div>
-          </div>
+          <>
+            <SkeletonCard />
+          </>
         )}
 
-        {videos.map((video, idx) => (
+        {!loading && videos.map((video, idx) => (
           <div key={video.id} className="h-full w-full snap-start snap-always relative">
             <VideoCard
               video={video}
@@ -272,27 +294,23 @@ export function FeedPage() {
         ))}
       </div>
 
-      {/* Error state */}
-      {!loading && error && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center px-8">
-          <ErrorState message={error} onRetry={loadVideos} />
-        </div>
-      )}
-
-      {/* Top bar — white bar with LIVE badge, Following/For You tabs, search icon */}
-      <div className="absolute top-0 left-0 right-0 z-30 bg-white px-4 pt-3 pb-2 flex items-center justify-between">
-        {/* LIVE badge top-left */}
-        <div className="flex items-center gap-1 bg-[#FF2D55] px-2 py-1 rounded-md">
+      {/* Top bar */}
+      <div className="absolute top-0 left-0 right-0 z-30 bg-gradient-to-b from-black/60 to-transparent px-4 pt-4 pb-2 flex items-center justify-between">
+        {/* LIVE badge */}
+        <button
+          onClick={() => window.location.hash = '#/live'}
+          className="flex items-center gap-1 bg-[#FF2D55] px-2 py-1 rounded-md active:scale-90 transition-transform"
+        >
           <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
           <span className="text-white text-[10px] font-bold">LIVE</span>
-        </div>
+        </button>
 
-        {/* Tabs center */}
+        {/* Tabs */}
         <div className="flex items-center gap-5">
           <button
             onClick={() => setTab('following')}
-            className={`text-sm transition-all ${
-              tab === 'following' ? 'text-black font-bold' : 'text-gray-400 font-medium'
+            className={`text-sm transition-all drop-shadow-lg ${
+              tab === 'following' ? 'text-white font-bold' : 'text-white/60 font-medium'
             }`}
           >
             Following
@@ -300,28 +318,28 @@ export function FeedPage() {
           <div className="relative">
             <button
               onClick={() => setTab('foryou')}
-              className={`text-sm transition-all ${
-                tab === 'foryou' ? 'text-black font-bold' : 'text-gray-400 font-medium'
+              className={`text-sm transition-all drop-shadow-lg ${
+                tab === 'foryou' ? 'text-white font-bold' : 'text-white/60 font-medium'
               }`}
             >
               For You
             </button>
             {tab === 'foryou' && (
-              <div className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-[#FF2D55] rounded-full" />
+              <div className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-white rounded-full" />
             )}
           </div>
         </div>
 
-        {/* Search icon top-right */}
-        <a
-          href="#/search"
-          className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center active:scale-90 transition-transform"
+        {/* Search */}
+        <button
+          onClick={() => window.location.hash = '#/search'}
+          className="w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform"
         >
-          <svg viewBox="0 0 24 24" className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+          <svg viewBox="0 0 24 24" className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" />
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-        </a>
+        </button>
       </div>
 
       {commentVideo && (

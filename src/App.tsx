@@ -24,6 +24,12 @@ import { AudioRoomPage } from '@/pages/AudioRoomPage';
 import EditProfilePage from '@/pages/EditProfilepage';
 import { LanguagePage } from '@/pages/LanguagePage';
 import SubSettingPage from '@/pages/SubSettingPage';
+import CameraPage from '@/pages/CameraPage';
+import PostPreviewPage from '@/pages/PostPreviewPage';
+import FriendsPage from '@/pages/FriendsPage';
+import InboxPage from '@/pages/InboxPage';
+import OfflineVideosPage from '@/pages/OfflineVideosPage';
+import CreatorToolsPage from '@/pages/CreatorToolsPage';
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash);
   useEffect(() => {
@@ -66,6 +72,12 @@ function Router() {
   if (hash === '#/activity-center') return <ActivityCenterPage />;
   if (hash === '#/qr-code') return <QrCodePage />;
   if (hash === '#/promote') return <PromotePage />;
+  if (hash === '#/offline-videos') return <OfflineVideosPage />;
+  if (hash === '#/creator-tools') return <CreatorToolsPage />;
+  if (hash === '#/camera') return <CameraPage />;
+  if (hash === '#/post-preview') return <PostPreviewPage />;
+  if (hash === '#/friends') return <FriendsPage />;
+  if (hash === '#/inbox') return <InboxPage />;
   if (hash === '#/admin') return <AdminPage />;
   if (hash === '#/live') return <LivePage />;
   if (hash === '#/audio') return <AudioChatPage />;

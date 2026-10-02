@@ -7,15 +7,14 @@ interface Props {
 export function BottomNav({ current }: Props) {
   const items = [
     { key: 'feed', href: '#/', icon: Home, label: 'Home' },
-    { key: 'friends', href: '#/search', icon: Users, label: 'Friends' },
-    { key: 'inbox', href: '#/notifications', icon: Inbox, label: 'Inbox' },
+    { key: 'friends', href: '#/friends', icon: Users, label: 'Friends' },
+    { key: 'inbox', href: '#/inbox', icon: Inbox, label: 'Inbox' },
     { key: 'me', href: '#/me', icon: User, label: 'Me' },
   ];
 
   return (
     <nav className="absolute bottom-0 left-0 right-0 z-40 bg-black border-t border-white/10">
       <div className="flex items-center justify-around h-16 px-2">
-        {/* Left two items */}
         {items.slice(0, 2).map((item) => {
           const Icon = item.icon;
           const active = current === item.key;
@@ -33,9 +32,9 @@ export function BottomNav({ current }: Props) {
           );
         })}
 
-        {/* Center + button */}
+        {/* Center + button -> camera */}
         <a
-          href="#/upload"
+          href="#/camera"
           className="relative flex items-center justify-center w-12 h-8 active:scale-90 transition-transform"
         >
           <div className="absolute left-0 w-7 h-8 rounded-l-lg bg-[#00FF88]" />
@@ -45,7 +44,6 @@ export function BottomNav({ current }: Props) {
           </div>
         </a>
 
-        {/* Right two items */}
         {items.slice(2).map((item) => {
           const Icon = item.icon;
           const active = current === item.key;

@@ -1,37 +1,61 @@
+import { ArrowLeft, Wallet, Coins, TrendingUp, Shield, Gift, BarChart3, Star } from 'lucide-react';
+
 export default function BalancePage() {
   return (
-    <div className="min-h-screen bg-[#f5f6f8] text-black flex flex-col">
-      <div className="h-[60px] flex items-center justify-between px-4 bg-gradient-to-b from-[#ffe6eb] to-[#f5f6f8]">
-        <button onClick={() => window.history.back()} className="text-3xl">‹</button>
-        <div className="text-center">
-          <h1 className="text-[20px] font-bold">Balance</h1>
-          <p className="text-[13px] text-black/60">🛡️ Secure</p>
-        </div>
-        <button className="text-2xl">⚙️</button>
+    <div className="min-h-screen bg-black text-white">
+      <div className="sticky top-0 z-20 bg-black/95 backdrop-blur-sm px-4 pt-6 pb-3 border-b border-white/10 flex items-center gap-3">
+        <button onClick={() => window.location.hash = '#/me'} className="text-gray-400 hover:text-white transition-colors">
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        <h1 className="text-lg font-bold">Balance</h1>
       </div>
-      <div className="px-4">
-        <div className="text-center mt-4">
-          <p className="text-black/50 text-[18px]">Estimated balance SAR 👁️</p>
-          <h1 className="text-[52px] font-black mt-2">0.03 <span className="text-[30px] font-light">›</span></h1>
-          <div className="mt-3 inline-flex items-center gap-3 bg-white rounded-full px-5 py-2 shadow-sm">
-            <span>Coins <b>0</b></span>
-            <span className="w-[1px] h-5 bg-black/10"></span>
-            <span className="text-[#ff2a55] font-bold">Get Coins →</span>
+
+      <div className="px-4 py-6">
+        <div className="text-center">
+          <p className="text-gray-500 text-sm">Estimated balance</p>
+          <h1 className="text-[48px] font-black mt-2">$0.00</h1>
+          <div className="mt-4 inline-flex items-center gap-3 bg-white/10 rounded-full px-5 py-2.5">
+            <span className="flex items-center gap-1.5 text-sm"><Coins className="w-4 h-4 text-[#FFD700]" /> Coins <b>0</b></span>
+            <span className="w-px h-5 bg-white/20" />
+            <button className="text-[#00FF88] font-bold text-sm">Get Coins →</button>
           </div>
         </div>
-        <div className="bg-white rounded-2xl p-4 mt-6 flex items-center justify-between">
-          <p className="font-bold text-[18px]">Transactions</p>
-          <div className="flex items-center gap-1 text-black/50 text-right"><div><p>Exchange of Coins:</p><p>USD0.02</p></div><span>›</span></div>
+
+        <div className="bg-white/5 rounded-xl p-4 mt-6 border border-white/10 flex items-center justify-between">
+          <p className="font-bold text-base">Transactions</p>
+          <div className="flex items-center gap-2 text-gray-500 text-sm">
+            <div><p>Exchange of Coins</p><p>$0.00</p></div>
+            <span>›</span>
+          </div>
         </div>
-        <div className="bg-white rounded-2xl p-4 mt-3 flex justify-between items-center">
-          <div><p className="font-bold text-[18px]">First recharge offer ›</p><p className="text-black/50 text-sm">Get Gifts and bonus Coins</p></div>
-          <div className="w-16 h-16 bg-[#ff4d6a] rounded-full flex items-center justify-center text-3xl">🎁</div>
+
+        <div className="bg-gradient-to-br from-[#00FF88]/20 to-[#0088FF]/20 rounded-xl p-4 mt-3 border border-white/10 flex justify-between items-center">
+          <div>
+            <p className="font-bold text-base">First recharge offer</p>
+            <p className="text-gray-400 text-sm mt-0.5">Get Gifts and bonus Coins</p>
+          </div>
+          <div className="w-14 h-14 bg-[#00FF88]/20 rounded-full flex items-center justify-center">
+            <Gift className="w-7 h-7 text-[#00FF88]" />
+          </div>
         </div>
-        <div className="bg-white rounded-2xl p-4 mt-3 grid grid-cols-3 gap-6">
-          <div className="text-center"><div className="w-14 h-14 bg-[#f5f5f5] rounded-xl flex items-center justify-center mx-auto">💲</div><p className="font-bold mt-2">LIVE rewards</p></div>
-          <div className="text-center"><div className="w-14 h-14 bg-[#f5f5f5] rounded-xl flex items-center justify-center mx-auto">📊</div><p className="font-bold mt-2">Monetization</p></div>
-          <div className="text-center"><div className="w-14 h-14 bg-[#f5f5f5] rounded-xl flex items-center justify-center mx-auto">🛡️</div><p className="font-bold mt-2">Campaigns</p></div>
-          <div className="text-center"><div className="w-14 h-14 bg-[#f5f5f5] rounded-xl flex items-center justify-center mx-auto">⭐</div><p className="font-bold mt-2">Subscription Manager</p></div>
+
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          <div className="bg-white/5 rounded-xl p-4 flex flex-col items-center border border-white/10">
+            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-2"><TrendingUp className="w-6 h-6 text-[#00FF88]" /></div>
+            <p className="font-semibold text-sm">LIVE rewards</p>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4 flex flex-col items-center border border-white/10">
+            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-2"><BarChart3 className="w-6 h-6 text-[#0088FF]" /></div>
+            <p className="font-semibold text-sm">Monetization</p>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4 flex flex-col items-center border border-white/10">
+            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-2"><Shield className="w-6 h-6 text-white" /></div>
+            <p className="font-semibold text-sm">Campaigns</p>
+          </div>
+          <div className="bg-white/5 rounded-xl p-4 flex flex-col items-center border border-white/10">
+            <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mb-2"><Star className="w-6 h-6 text-[#FFD700]" /></div>
+            <p className="font-semibold text-sm">Subscriptions</p>
+          </div>
         </div>
       </div>
     </div>
