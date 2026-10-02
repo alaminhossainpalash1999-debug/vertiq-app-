@@ -21,7 +21,9 @@ interface DemoVideo {
   saved_by_me: boolean;
 }
 
-const DEMO_VIDEOS: DemoVideo[] = [
+video_url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800"
+video_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800"
+video_url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800"
   {
     id: 'demo-1',
     user_id: 'demo-user-1',
