@@ -3,7 +3,9 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { LoadingState, ErrorState } from '@/components/States';
 import { createSignaling, createPeerConnection } from '@/lib/webrtc';
-import { X, Users, Mic, MicOff, Camera, CameraOff } from 'lucide-react';
+import { X, Users, Mic, MicOff, Camera, CameraOff, ShieldAlert } from 'lucide-react';
+import * as tf from '@tensorflow/tfjs';
+import { load as loadNsfwModel, type NSFWJS } from 'nsfwjs';
 
 interface Props {
   streamId: string;
@@ -13,6 +15,10 @@ interface PeerState {
   pc: RTCPeerConnection;
   viewerId: string;
 }
+
+const SCAN_INTERVAL_MS = 2000;
+const NUDITY_THRESHOLD = 0.75;
+const BAN_COUNTDOWN_SECONDS = 3;
 
 export function GoLivePage({ streamId }: Props) {
   const { user, profile } = useAuth();
@@ -26,6 +32,14 @@ export function GoLivePage({ streamId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(true);
+
+  // Nudity detection state
+  const nsfwModelRef = useRef<NSFWJS | null>(null);
+  const scanTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const banCountdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [nudityWarning, setNudityWarning] = useState(false);
+  const [banCountdown, setBanCountdown] = useState<number | null>(null);
+  const [banned, setBanned] = useState(false);
 
   if (profile && !profile.is_live_allowed) {
     return (
@@ -89,6 +103,105 @@ export function GoLivePage({ streamId }: Props) {
     startStreaming();
   }, [loading, error, startStreaming]);
 
+  // Load NSFW model once camera is ready
+  useEffect(() => {
+    if (loading || error) return;
+
+    let cancelled = false;
+
+    async function loadModel() {
+      try {
+        await tf.ready();
+        const model = await loadNsfwModel();
+        if (cancelled) return;
+        nsfwModelRef.current = model;
+      } catch {
+        // Model failed to load — detection just won't run, stream continues
+      }
+    }
+
+    loadModel();
+    return () => { cancelled = true; };
+  }, [loading, error]);
+
+  // Start scanning loop once video is playing and model is loaded
+  const beginNudityScanning = useCallback(() => {
+    if (scanTimerRef.current) return;
+
+    scanTimerRef.current = setInterval(async () => {
+      const video = videoRef.current;
+      const model = nsfwModelRef.current;
+      if (!video || !model || video.readyState < 2) return;
+      if (nudityWarning || banned) return;
+
+      try {
+        const predictions = await model.classify(video, 1);
+        const top = predictions[0];
+        if (!top) return;
+
+        if ((top.className === 'Porn' || top.className === 'Sexy') && top.probability > NUDITY_THRESHOLD) {
+          setNudityWarning(true);
+          startBanCountdown();
+        }
+      } catch {
+        // Classification error — skip this frame
+      }
+    }, SCAN_INTERVAL_MS);
+  }, [nudityWarning, banned]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || loading || error) return;
+
+    function onPlaying() {
+      beginNudityScanning();
+    }
+
+    video.addEventListener('playing', onPlaying);
+    return () => video.removeEventListener('playing', onPlaying);
+  }, [loading, error, beginNudityScanning]);
+
+  function startBanCountdown() {
+    if (banCountdownRef.current) return;
+    setBanCountdown(BAN_COUNTDOWN_SECONDS);
+
+    banCountdownRef.current = setInterval(() => {
+      setBanCountdown((prev) => {
+        if (prev === null) return null;
+        if (prev <= 1) {
+          // Countdown finished — ban and end stream
+          if (banCountdownRef.current) {
+            clearInterval(banCountdownRef.current);
+            banCountdownRef.current = null;
+          }
+          setBanned(true);
+          setNudityWarning(false);
+          doBanAndEndStream();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+  async function doBanAndEndStream() {
+    // Stop scanning
+    if (scanTimerRef.current) {
+      clearInterval(scanTimerRef.current);
+      scanTimerRef.current = null;
+    }
+
+    // End the stream in database
+    await supabase
+      .from('live_streams')
+      .update({ status: 'ended', ended_at: new Date().toISOString() })
+      .eq('id', streamId);
+
+    // Stop all tracks
+    signalingRef.current?.cleanupSignals();
+    localStreamRef.current?.getTracks().forEach((t) => t.stop());
+  }
+
   useEffect(() => {
     if (loading || error || !user) return;
 
@@ -143,10 +256,22 @@ export function GoLivePage({ streamId }: Props) {
       peersRef.current.clear();
       signaling.cleanupSignals();
       localStreamRef.current?.getTracks().forEach((t) => t.stop());
+      if (scanTimerRef.current) {
+        clearInterval(scanTimerRef.current);
+        scanTimerRef.current = null;
+      }
+      if (banCountdownRef.current) {
+        clearInterval(banCountdownRef.current);
+        banCountdownRef.current = null;
+      }
     };
   }, [loading, error, user, streamId]);
 
   async function endStream() {
+    if (scanTimerRef.current) {
+      clearInterval(scanTimerRef.current);
+      scanTimerRef.current = null;
+    }
     await supabase.from('live_streams').update({ status: 'ended', ended_at: new Date().toISOString() }).eq('id', streamId);
     signalingRef.current?.cleanupSignals();
     localStreamRef.current?.getTracks().forEach((t) => t.stop());
@@ -188,6 +313,27 @@ export function GoLivePage({ streamId }: Props) {
     );
   }
 
+  // Final ban screen
+  if (banned) {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center px-8 text-center">
+        <div className="w-24 h-24 rounded-full bg-[#FF3B30] flex items-center justify-center mb-6">
+          <ShieldAlert className="w-12 h-12 text-white" />
+        </div>
+        <h1 className="text-white text-2xl font-black mb-3">Your ID has been banned for nudity</h1>
+        <p className="text-gray-400 text-sm mb-8 max-w-xs">
+          Your live stream has been terminated. Your account is flagged for violating Vertiq's community guidelines.
+        </p>
+        <button
+          onClick={() => window.location.hash = '#/'}
+          className="bg-[#8A2BE2] text-white font-bold px-10 py-3 rounded-full text-sm active:scale-95 transition-transform"
+        >
+          Back to Home
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="relative h-screen w-full bg-black overflow-hidden">
       <video
@@ -200,6 +346,27 @@ export function GoLivePage({ streamId }: Props) {
       />
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60 pointer-events-none" />
+
+      {/* Nudity warning overlay — hidden by default, shown only on detection */}
+      {nudityWarning && banCountdown !== null && banCountdown > 0 && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#FF3B30]/95">
+          <div className="w-28 h-28 rounded-full bg-white/20 flex items-center justify-center mb-6">
+            <span
+              className="text-7xl font-black text-white"
+              style={{ animation: 'banPulse 1s ease-in-out infinite' }}
+            >
+              {banCountdown}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 mb-4">
+            <ShieldAlert className="w-10 h-10 text-white" />
+            <h2 className="text-white text-2xl font-black uppercase tracking-wide">NUDITY NOT ALLOWED</h2>
+          </div>
+          <p className="text-white text-xl font-bold uppercase tracking-wide">ID WILL BE BANNED</p>
+          <p className="text-white/80 text-sm mt-4">Stopping stream in {banCountdown}…</p>
+          <style>{`@keyframes banPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.3); } }`}</style>
+        </div>
+      )}
 
       <div className="absolute top-0 left-0 right-0 z-30 pt-6 pb-3 px-4 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent">
         <div className="flex items-center gap-2">
