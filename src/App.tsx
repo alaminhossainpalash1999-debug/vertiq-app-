@@ -31,6 +31,7 @@ import FriendsPage from '@/pages/FriendsPage';
 import InboxPage from '@/pages/InboxPage';
 import OfflineVideosPage from '@/pages/OfflineVideosPage';
 import CreatorToolsPage from '@/pages/CreatorToolsPage';
+import CreateTextPage from '@/pages/CreateTextPage';
 function useHashRoute() {
   const [hash, setHash] = useState(window.location.hash);
   useEffect(() => {
@@ -50,7 +51,7 @@ function Router() {
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-10 h-10 border-2 border-[#00FF88] border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-2 border-[#8A2BE2] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -76,6 +77,7 @@ function Router() {
   if (hash === '#/offline-videos') return <OfflineVideosPage />;
   if (hash === '#/creator-tools') return <CreatorToolsPage />;
   if (hash === '#/camera') return <CameraPage />;
+  if (hash === '#/create/text') return <CreateTextPage />;
   if (hash === '#/post-preview') return <PostPreviewPage />;
   if (hash === '#/friends') return <FriendsPage />;
   if (hash === '#/inbox') return <InboxPage />;

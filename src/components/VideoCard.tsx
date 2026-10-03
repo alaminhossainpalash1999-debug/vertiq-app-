@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, MessageCircle, Share2, Music2, Bookmark, Flag, MoreHorizontal, Plus } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Music2, Flag, MoreHorizontal, Plus } from 'lucide-react';
 import type { VideoWithProfile } from '@/lib/supabase';
 import { renderCaptionWithHashtags, formatCount } from '@/lib/format';
 
@@ -22,7 +22,6 @@ export function VideoCard({
   onToggleMute,
   onOpenComments,
   onToggleLike,
-  onToggleBookmark,
   onOpenProfile,
   onReport,
 }: Props) {
@@ -91,19 +90,19 @@ export function VideoCard({
         </>
       )}
 
-      {/* Right action rail — TikTok style */}
+      {/* Right action rail — Profile, Like, Comment, Share only */}
       <div className="absolute right-2 bottom-24 flex flex-col items-center gap-4 z-20">
         {/* Profile avatar with + follow button */}
         <button
           onClick={onOpenProfile}
           className="relative flex flex-col items-center active:scale-90 transition-transform"
         >
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00FF88] to-[#0088FF] flex items-center justify-center border-2 border-white">
-            <span className="text-black font-bold text-lg">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#8A2BE2] to-[#FF69B4] flex items-center justify-center border-2 border-white">
+            <span className="text-white font-bold text-lg">
               {(video.profiles?.username ?? '?')[0]?.toUpperCase()}
             </span>
           </div>
-          <div className="absolute -bottom-2 w-5 h-5 rounded-full bg-[#FF2D55] flex items-center justify-center border-2 border-black">
+          <div className="absolute -bottom-2 w-5 h-5 rounded-full bg-[#8A2BE2] flex items-center justify-center border-2 border-black">
             <Plus className="w-3 h-3 text-white" strokeWidth={3} />
           </div>
         </button>
@@ -114,7 +113,7 @@ export function VideoCard({
           className="flex flex-col items-center gap-0.5 active:scale-90 transition-transform"
         >
           <Heart
-            className={`w-9 h-9 transition-all drop-shadow-lg ${video.liked_by_me ? 'fill-[#FF2D55] text-[#FF2D55]' : 'text-white'}`}
+            className={`w-9 h-9 transition-all drop-shadow-lg ${video.liked_by_me ? 'fill-[#8A2BE2] text-[#8A2BE2]' : 'text-white'}`}
             strokeWidth={2}
           />
           <span className="text-xs font-semibold text-white drop-shadow-lg">
@@ -133,18 +132,6 @@ export function VideoCard({
           </span>
         </button>
 
-        {/* Bookmark/Save */}
-        <button
-          onClick={onToggleBookmark}
-          className="flex flex-col items-center gap-0.5 active:scale-90 transition-transform"
-        >
-          <Bookmark
-            className={`w-9 h-9 transition-all drop-shadow-lg ${video.saved_by_me ? 'fill-[#0088FF] text-[#0088FF]' : 'text-white'}`}
-            strokeWidth={2}
-          />
-          <span className="text-xs font-semibold text-white drop-shadow-lg">Save</span>
-        </button>
-
         {/* Share */}
         <button
           onClick={handleShare}
@@ -159,7 +146,7 @@ export function VideoCard({
           onClick={() => setMenuOpen((o) => !o)}
           className="flex flex-col items-center gap-0.5 active:scale-90 transition-transform"
         >
-          <MoreHorizontal className="w-9 h-9 text-white drop-shadow-lg" strokeWidth={2} />
+          <MoreHorizontal className="w-9 h-9 text-white drop-shadow-lg" />
         </button>
       </div>
 
@@ -176,8 +163,8 @@ export function VideoCard({
           <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="url(#vertiqGradient)" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
             <defs>
               <linearGradient id="vertiqGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#00FF88" />
-                <stop offset="100%" stopColor="#0088FF" />
+                <stop offset="0%" stopColor="#8A2BE2" />
+                <stop offset="100%" stopColor="#FF69B4" />
               </linearGradient>
             </defs>
             <path d="M3 4l9 16 9-16" />

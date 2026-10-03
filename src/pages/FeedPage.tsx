@@ -6,7 +6,7 @@ import { CommentSheet } from '@/components/CommentSheet';
 import { BottomNav } from '@/components/BottomNav';
 import { ReportSheet } from '@/components/ReportSheet';
 
-type FeedTab = 'foryou' | 'following';
+type FeedTab = 'following' | 'trending';
 
 interface DemoVideo {
   id: string;
@@ -21,9 +21,7 @@ interface DemoVideo {
   saved_by_me: boolean;
 }
 
-video_url: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=800"
-video_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800"
-video_url: "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800"
+const DEMO_VIDEOS: DemoVideo[] = [
   {
     id: 'demo-1',
     user_id: 'demo-user-1',
@@ -77,7 +75,7 @@ function SkeletonCard() {
 
 export function FeedPage() {
   const { user } = useAuth();
-  const [tab, setTab] = useState<FeedTab>('foryou');
+  const [tab, setTab] = useState<FeedTab>('trending');
   const [videos, setVideos] = useState<VideoWithProfile[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [muted, setMuted] = useState(true);
@@ -298,14 +296,18 @@ export function FeedPage() {
 
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 z-30 bg-gradient-to-b from-black/60 to-transparent px-4 pt-4 pb-2 flex items-center justify-between">
-        {/* LIVE badge */}
-        <button
-          onClick={() => window.location.hash = '#/live'}
-          className="flex items-center gap-1 bg-[#FF2D55] px-2 py-1 rounded-md active:scale-90 transition-transform"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-          <span className="text-white text-[10px] font-bold">LIVE</span>
-        </button>
+        {/* Vertiq logo */}
+        <div className="flex items-center gap-1.5">
+          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="url(#feedGradient)" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+            <defs>
+              <linearGradient id="feedGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#8A2BE2" />
+                <stop offset="100%" stopColor="#FF69B4" />
+              </linearGradient>
+            </defs>
+            <path d="M3 4l9 16 9-16" />
+          </svg>
+        </div>
 
         {/* Tabs */}
         <div className="flex items-center gap-5">
@@ -319,28 +321,26 @@ export function FeedPage() {
           </button>
           <div className="relative">
             <button
-              onClick={() => setTab('foryou')}
+              onClick={() => setTab('trending')}
               className={`text-sm transition-all drop-shadow-lg ${
-                tab === 'foryou' ? 'text-white font-bold' : 'text-white/60 font-medium'
+                tab === 'trending' ? 'text-white font-bold' : 'text-white/60 font-medium'
               }`}
             >
-              For You
+              Trending
             </button>
-            {tab === 'foryou' && (
-              <div className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-white rounded-full" />
+            {tab === 'trending' && (
+              <div className="absolute -bottom-1.5 left-0 right-0 h-0.5 bg-[#8A2BE2] rounded-full" />
             )}
           </div>
         </div>
 
-        {/* Search */}
+        {/* LIVE badge */}
         <button
-          onClick={() => window.location.hash = '#/search'}
-          className="w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center active:scale-90 transition-transform"
+          onClick={() => window.location.hash = '#/live'}
+          className="flex items-center gap-1 bg-gradient-to-r from-[#8A2BE2] to-[#FF69B4] px-3 py-1 rounded-full active:scale-90 transition-transform"
         >
-          <svg viewBox="0 0 24 24" className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          <span className="text-white text-[10px] font-bold">LIVE NOW</span>
         </button>
       </div>
 

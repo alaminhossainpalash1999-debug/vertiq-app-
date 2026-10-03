@@ -27,7 +27,7 @@ export function timeAgo(dateStr: string): string {
 export function renderCaptionWithHashtags(caption: string) {
   return caption.split(/(\s+)/).map((part, i) =>
     part.startsWith('#') ? (
-      <span key={i} className="text-[#00FF88] font-medium">{part}</span>
+      <span key={i} className="text-[#8A2BE2] font-medium">{part}</span>
     ) : (
       <span key={i}>{part}</span>
     ),

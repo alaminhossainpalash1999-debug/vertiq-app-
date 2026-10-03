@@ -239,13 +239,13 @@ export function MessagesPage() {
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00FF88] to-[#0088FF] flex items-center justify-center">
-            <span className="text-black font-bold text-sm">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8A2BE2] to-[#FF69B4] flex items-center justify-center">
+            <span className="text-white font-bold text-sm">
               {activeConversation.username[0]?.toUpperCase()}
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <a href={`#/profile/${activeConversation.id}`} className="text-white font-semibold text-sm hover:text-[#00FF88] transition-colors">
+            <a href={`#/profile/${activeConversation.id}`} className="text-white font-semibold text-sm hover:text-[#8A2BE2] transition-colors">
               @{activeConversation.username}
             </a>
           </div>
@@ -265,12 +265,12 @@ export function MessagesPage() {
                 <div
                   className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm leading-snug ${
                     isMine
-                      ? 'bg-gradient-to-r from-[#00FF88] to-[#0088FF] text-black rounded-br-sm'
+                      ? 'bg-gradient-to-r from-[#8A2BE2] to-[#FF69B4] text-white rounded-br-sm'
                       : 'bg-white/10 text-white rounded-bl-sm'
                   }`}
                 >
                   <p className="break-words">{m.text}</p>
-                  <p className={`text-[10px] mt-1 ${isMine ? 'text-black/50' : 'text-gray-500'}`}>
+                  <p className={`text-[10px] mt-1 ${isMine ? 'text-white/60' : 'text-gray-500'}`}>
                     {timeAgo(m.created_at)}
                   </p>
                 </div>
@@ -287,15 +287,15 @@ export function MessagesPage() {
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder="Send a message…"
-            className="flex-1 bg-white/10 border border-white/10 rounded-full px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-[#00FF88] transition-colors"
+            className="flex-1 bg-white/10 border border-white/10 rounded-full px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-[#8A2BE2] transition-colors"
             maxLength={500}
           />
           <button
             type="submit"
             disabled={!draft.trim() || sending}
-            className="w-10 h-10 rounded-full bg-[#00FF88] flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed active:scale-90 transition-transform shrink-0"
+            className="w-10 h-10 rounded-full bg-[#8A2BE2] flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed active:scale-90 transition-transform shrink-0"
           >
-            <Send className="w-5 h-5 text-black" strokeWidth={2} />
+            <Send className="w-5 h-5 text-white" strokeWidth={2} />
           </button>
         </form>
       </div>
@@ -314,7 +314,7 @@ export function MessagesPage() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search users to start a chat…"
-            className="w-full bg-white/10 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-[#00FF88] transition-colors"
+            className="w-full bg-white/10 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-[#8A2BE2] transition-colors"
           />
         </div>
       </div>
@@ -337,8 +337,8 @@ export function MessagesPage() {
                 }}
                 className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left"
               >
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#00FF88] to-[#0088FF] flex items-center justify-center shrink-0">
-                  <span className="text-black font-bold text-base">{p.username[0]?.toUpperCase()}</span>
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8A2BE2] to-[#FF69B4] flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold text-base">{p.username[0]?.toUpperCase()}</span>
                 </div>
                 <div className="min-w-0">
                   <p className="text-white font-semibold text-sm truncate">@{p.username}</p>
@@ -365,8 +365,8 @@ export function MessagesPage() {
                     onClick={() => setActiveConversation(c.otherUser)}
                     className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left"
                   >
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#00FF88] to-[#0088FF] flex items-center justify-center shrink-0">
-                      <span className="text-black font-bold text-base">{c.otherUser.username[0]?.toUpperCase()}</span>
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8A2BE2] to-[#FF69B4] flex items-center justify-center shrink-0">
+                      <span className="text-white font-bold text-base">{c.otherUser.username[0]?.toUpperCase()}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-semibold text-sm truncate">@{c.otherUser.username}</p>
@@ -375,7 +375,7 @@ export function MessagesPage() {
                     <div className="flex flex-col items-end gap-1 shrink-0">
                       <span className="text-gray-600 text-[10px]">{timeAgo(c.lastMessage.created_at)}</span>
                       {c.unreadCount > 0 && (
-                        <span className="min-w-5 h-5 px-1.5 rounded-full bg-[#00FF88] text-black text-[10px] font-bold flex items-center justify-center">
+                        <span className="min-w-5 h-5 px-1.5 rounded-full bg-[#8A2BE2] text-white text-[10px] font-bold flex items-center justify-center">
                           {c.unreadCount}
                         </span>
                       )}

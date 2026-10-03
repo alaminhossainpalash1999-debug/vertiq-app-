@@ -1,4 +1,4 @@
-import { Home, Users, Inbox, User, Plus } from 'lucide-react';
+import { Home, Users, MessageCircle, User, Plus } from 'lucide-react';
 
 interface Props {
   current: string;
@@ -7,9 +7,9 @@ interface Props {
 export function BottomNav({ current }: Props) {
   const items = [
     { key: 'feed', href: '#/', icon: Home, label: 'Home' },
-    { key: 'friends', href: '#/friends', icon: Users, label: 'Friends' },
-    { key: 'inbox', href: '#/inbox', icon: Inbox, label: 'Inbox' },
-    { key: 'me', href: '#/me', icon: User, label: 'Me' },
+    { key: 'friends', href: '#/friends', icon: Users, label: 'Community' },
+    { key: 'inbox', href: '#/inbox', icon: MessageCircle, label: 'Chat' },
+    { key: 'me', href: '#/me', icon: User, label: 'Profile' },
   ];
 
   return (
@@ -32,13 +32,13 @@ export function BottomNav({ current }: Props) {
           );
         })}
 
-        {/* Center + button -> camera */}
+        {/* Center + button with purple-pink gradient */}
         <a
           href="#/camera"
           className="relative flex items-center justify-center w-12 h-8 active:scale-90 transition-transform"
         >
-          <div className="absolute left-0 w-7 h-8 rounded-l-lg bg-[#00FF88]" />
-          <div className="absolute right-0 w-7 h-8 rounded-r-lg bg-[#0088FF]" />
+          <div className="absolute left-0 w-7 h-8 rounded-l-lg bg-[#8A2BE2]" />
+          <div className="absolute right-0 w-7 h-8 rounded-r-lg bg-[#FF69B4]" />
           <div className="relative w-9 h-7 rounded-lg bg-black flex items-center justify-center">
             <Plus className="w-5 h-5 text-white" strokeWidth={2.5} />
           </div>

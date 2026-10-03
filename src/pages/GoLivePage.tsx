@@ -15,7 +15,7 @@ interface PeerState {
 }
 
 export function GoLivePage({ streamId }: Props) {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const videoRef = useRef<HTMLVideoElement>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const peersRef = useRef<Map<string, PeerState>>(new Map());
@@ -26,6 +26,21 @@ export function GoLivePage({ streamId }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(true);
+
+  if (profile && !profile.is_live_allowed) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-8 text-center">
+        <p className="text-white font-semibold text-lg mb-2">Live is unavailable</p>
+        <p className="text-gray-400 text-sm mb-6">Live is only for Vertiq global accounts</p>
+        <button
+          onClick={() => window.location.hash = '#/'}
+          className="bg-[#8A2BE2] text-white font-bold px-8 py-2.5 rounded-full text-sm active:scale-95 transition-transform"
+        >
+          Go Home
+        </button>
+      </div>
+    );
+  }
 
   useEffect(() => {
     async function loadStream() {
@@ -188,7 +203,7 @@ export function GoLivePage({ streamId }: Props) {
 
       <div className="absolute top-0 left-0 right-0 z-30 pt-6 pb-3 px-4 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 bg-red-500 px-2.5 py-1 rounded-full">
+          <div className="flex items-center gap-2 bg-[#8A2BE2] px-2.5 py-1 rounded-full">
             <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
             <span className="text-white text-xs font-bold">LIVE</span>
           </div>
@@ -197,7 +212,7 @@ export function GoLivePage({ streamId }: Props) {
             {viewerCount}
           </span>
         </div>
-        <button onClick={endStream} className="bg-red-500 hover:bg-red-600 text-white text-sm font-bold px-4 py-1.5 rounded-full transition-colors">
+        <button onClick={endStream} className="bg-[#FF3B30] hover:bg-red-600 text-white text-sm font-bold px-4 py-1.5 rounded-full transition-colors">
           End Stream
         </button>
       </div>
@@ -212,7 +227,7 @@ export function GoLivePage({ streamId }: Props) {
           <button
             onClick={toggleMic}
             className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-              micOn ? 'bg-white/15 text-white' : 'bg-red-500 text-white'
+              micOn ? 'bg-white/15 text-white' : 'bg-[#FF3B30] text-white'
             }`}
           >
             {micOn ? <Mic className="w-5 h-5" /> : <MicOff className="w-5 h-5" />}
@@ -220,7 +235,7 @@ export function GoLivePage({ streamId }: Props) {
           <button
             onClick={toggleCamera}
             className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-              cameraOn ? 'bg-white/15 text-white' : 'bg-red-500 text-white'
+              cameraOn ? 'bg-white/15 text-white' : 'bg-[#FF3B30] text-white'
             }`}
           >
             {cameraOn ? <Camera className="w-5 h-5" /> : <CameraOff className="w-5 h-5" />}

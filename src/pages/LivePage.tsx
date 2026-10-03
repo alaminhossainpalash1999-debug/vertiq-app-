@@ -4,7 +4,8 @@ import { useAuth } from '@/context/AuthContext';
 import { BottomNav } from '@/components/BottomNav';
 
 export function LivePage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+  const canLive = profile?.is_live_allowed ?? true;
   const [streams, setStreams] = useState<LiveStreamWithHost[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
@@ -37,7 +38,7 @@ export function LivePage() {
           <div className="flex items-center gap-2 bg-black/50 rounded-full pr-3">
             <img src={s.host?.avatar_url || `https://i.pravatar.cc/100?img=${s.id}`} className="w-10 h-10 rounded-full" />
             <div><p className="text-sm font-bold">{s.host?.username || s.title}</p><p className="text-[10px] opacity-70">{s.viewer_count || 15} viewers</p></div>
-            <button className="bg-[#FE2C55] px-3 py-1 rounded-full text-xs font-bold">+ Follow</button>
+            <button className="bg-[#8A2BE2] px-3 py-1 rounded-full text-xs font-bold">+ Follow</button>
           </div>
           <div className="flex gap-2"><span className="bg-black/50 px-2 py-1 rounded-full text-xs">{s.viewer_count || 6}</span><button onClick={() => setCurrentIndex(null)} className="w-8 h-8 bg-black/50 rounded-full">X</button></div>
         </div>
@@ -57,9 +58,9 @@ export function LivePage() {
     <div className="min-h-screen bg-black text-white pb-20">
       <div className="flex justify-between items-center p-4 sticky top-0 bg-black z-10"><span>≡</span><h1 className="font-bold">Discover LIVE</h1><a href="#/">X</a></div>
       <div className="flex gap-3 overflow-x-auto px-4 py-2">
-        <div className="flex flex-col items-center min-w-[65px]"><div className="w-16 h-16 rounded-full bg-[#2a2a2a] flex items-center justify-center text-xl">+</div><p className="text-xs mt-1">Go LIVE</p></div>
+        {canLive && <div className="flex flex-col items-center min-w-[65px]"><div className="w-16 h-16 rounded-full bg-[#2a2a2a] flex items-center justify-center text-xl">+</div><p className="text-xs mt-1">Go LIVE</p></div>}
         {streams.map((s, i) => (
-          <div key={s.id} onClick={() => setCurrentIndex(i)} className="flex flex-col items-center min-w-[65px] cursor-pointer"><div className="w-16 h-16 rounded-full border-2 border-[#FE2C55]"><img src={s.host?.avatar_url || `https://i.pravatar.cc/100?img=${i+1}`} className="w-full h-full rounded-full object-cover" /></div><p className="text-[11px] mt-1 truncate w-[60px]">{s.host?.username || s.title}</p></div>
+          <div key={s.id} onClick={() => setCurrentIndex(i)} className="flex flex-col items-center min-w-[65px] cursor-pointer"><div className="w-16 h-16 rounded-full border-2 border-[#8A2BE2]"><img src={s.host?.avatar_url || `https://i.pravatar.cc/100?img=${i+1}`} className="w-full h-full rounded-full object-cover" /></div><p className="text-[11px] mt-1 truncate w-[60px]">{s.host?.username || s.title}</p></div>
         ))}
       </div>
       <div className="grid grid-cols-3 gap-1 p-1">

@@ -8,7 +8,7 @@ interface AuthContextValue {
   profile: Profile | null;
   loading: boolean;
   isAdmin: boolean;
-  signUp: (email: string, password: string, username: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, username: string, phone?: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function fetchProfile(userId: string) {
     const { data } = await supabase
       .from('profiles')
-      .select('id, username, avatar_url, created_at, is_private, role, is_blocked')
+      .select('id, username, avatar_url, created_at, is_private, role, is_blocked, registered_phone, is_live_allowed')
       .eq('id', userId)
       .maybeSingle();
     setProfile(data as Profile | null);
@@ -62,14 +62,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     profile,
     loading,
     isAdmin: profile?.role === 'admin',
-    async signUp(email, password, username) {
+    async signUp(email, password, username, phone) {
       const { data, error } = await supabase.auth.signUp({ email, password });
       if (error) return { error: error.message };
       if (!data.user) return { error: 'Sign-up failed. Please try again.' };
 
+      const isBdNumber = phone ? phone.startsWith('+880') : false;
+      const isLiveAllowed = !isBdNumber;
+
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert({ id: data.user.id, username });
+        .insert({ id: data.user.id, username, registered_phone: phone || null, is_live_allowed: isLiveAllowed });
 
       if (profileError) {
         if (profileError.code === '23505') {

@@ -20,6 +20,8 @@ export interface Profile {
   is_private: boolean;
   role: 'user' | 'admin';
   is_blocked: boolean;
+  registered_phone: string | null;
+  is_live_allowed: boolean;
 }
 
 export interface Video {
