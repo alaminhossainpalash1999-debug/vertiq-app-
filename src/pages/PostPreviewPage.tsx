@@ -1,6 +1,8 @@
 import { ArrowLeft, Check, Music2, Hash, AtSign } from 'lucide-react';
-
+import { useState, useRef } from 'react';
 export default function PostPreviewPage() {
+   const [preview, setPreview] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="sticky top-0 z-20 bg-black/95 backdrop-blur-sm px-4 pt-6 pb-3 border-b border-white/10 flex items-center justify-between">
