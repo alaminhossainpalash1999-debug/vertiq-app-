@@ -19,9 +19,10 @@ export default function PostPreviewPage() {
       </div>
 
       <div className="px-4 py-6">
+        <input type="file" ref={fileRef} hidden accept="image/*,video/*" onChange={(e)=> setPreview(URL.createObjectURL(e.target.files![0]))} />
         {/* Preview area */}
         <div className="w-full aspect-[9/16] max-h-[400px] mx-auto bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] rounded-2xl border border-white/10 flex items-center justify-center mb-6">
-          <p className="text-gray-600 text-sm">Your capture preview</p>
+         {preview ? <img src={preview} className="w-full h-full object-cover rounded-2xl" /> : <p className="text-gray-600 text-sm">Your capture preview</p>}
         </div>
 
         {/* Caption */}
