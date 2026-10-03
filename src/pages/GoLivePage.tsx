@@ -4,8 +4,8 @@ import { useAuth } from '@/context/AuthContext';
 import { LoadingState, ErrorState } from '@/components/States';
 import { createSignaling, createPeerConnection } from '@/lib/webrtc';
 import { X, Users, Mic, MicOff, Camera, CameraOff, ShieldAlert } from 'lucide-react';
-import * as tf from '@tensorflow/tfjs';
-import { load as loadNsfwModel, type NSFWJS } from 'nsfwjs';
+// Model will be loaded from CDN to avoid install error
+const NSFW_CDN = "https://cdn.jsdelivr.net/npm/nsfwjs@2.4.2/dist/nsfwjs.min.js";
 
 interface Props {
   streamId: string;
